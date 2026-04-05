@@ -598,8 +598,19 @@
         <!-- Main Balance Card -->
         <div class="balance-card-wrapper">
             <div class="balance-card">
-                <div class="balance-header" data-i18n="total_balance">Total Balance</div>
-                <div class="balance-amount" id="dbTotalBalance">₹0.00</div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <div class="balance-header" data-i18n="total_balance">Total Balance</div>
+                        <div class="balance-amount" id="dbTotalBalance">₹0.00</div>
+                    </div>
+                    <div id="dashExpiryBox"
+                        style="display: none; text-align: right; background: rgba(255,255,255,0.15); padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div
+                            style="font-size: 10px; opacity: 0.8; font-weight: 600; text-transform: uppercase; margin-bottom: 2px;">
+                            PRO Expires</div>
+                        <div id="dashExpiryDate" style="font-size: 12px; font-weight: 700;">--/--/--</div>
+                    </div>
+                </div>
                 <div class="balance-stats">
                     <div class="stat-item">
                         <div class="stat-label" data-i18n="income">Income</div>
@@ -859,6 +870,13 @@
                 if (banner) banner.style.display = 'none';
                 let badge = document.getElementById('dashProBadge');
                 if (badge) badge.style.display = 'inline-block';
+
+                // Display Expiry Date
+                if (expiryDateStr) {
+                    const expiryDate = new Date(expiryDateStr);
+                    document.getElementById('dashExpiryBox').style.display = 'block';
+                    document.getElementById('dashExpiryDate').innerText = expiryDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+                }
             } else {
                 // Ensure Pro badge is hidden and banner shown for non-premium
                 let banner = document.getElementById('dashPremiumBanner');
