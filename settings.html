@@ -317,7 +317,11 @@
             <div class="profile-info">
                 <h3>Hello, User</h3>
                 <p>user@example.com</p>
-                <div class="pro-badge"><i class="fa-solid fa-crown"></i> PRO Active</div>
+                <div id="settingsProBadge" class="pro-badge" style="display: none;"><i class="fa-solid fa-crown"></i> PRO Active</div>
+                <div id="settingsPlanInfo" style="display: none; margin-top: 4px;">
+                    <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">Plan: <span id="settingsPlanName" style="color: var(--text-primary);">--</span></div>
+                    <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">Valid till: <span id="settingsExpiryDate" style="color: var(--text-primary);">--</span></div>
+                </div>
             </div>
         </div>
 
@@ -335,7 +339,7 @@
                 <a href="premium.html" class="settings-item">
                     <div class="s-icon-bg bg-pro"><i class="fa-solid fa-crown"></i></div>
                     <div class="s-text">Subscription Status</div>
-                    <div class="s-value" style="color: #ca8a04; font-weight: 500;">Active</div>
+                    <div id="settingsStatusValue" class="s-value" style="color: #ca8a04; font-weight: 500;">Active</div>
                     <div class="s-chevron"><i class="fa-solid fa-chevron-right"></i></div>
                 </a>
 
@@ -418,6 +422,50 @@
 
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const isPremium = localStorage.getItem('premium') === 'true';
+            if (isPremium) {
+                // Show badge
+                document.getElementById('settingsProBadge').style.display = 'inline-flex';
+                
+                // Show plan info
+                const planName = localStorage.getItem('plan') || 'Pro Plan';
+                const expiryDateKey = localStorage.getItem('premiumExpiryDate') || localStorage.getItem('subscriptionExpiryDate');
+                
+                if (planName || expiryDateKey) {
+                    document.getElementById('settingsPlanInfo').style.display = 'block';
+                    if (planName) document.getElementById('settingsPlanName').innerText = planName.replace(' Subscription', '');
+                    
+                    if (expiryDateKey) {
+                        const date = new Date(expiryDateKey);
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const year = date.getFullYear();
+                        const formattedDate = `${day}/${month}/${year}`;
+                        
+                        document.getElementById('settingsExpiryDate').innerText = formattedDate;
+                        
+                        // Update status list row
+                        const statusValue = document.getElementById('settingsStatusValue');
+                        if (statusValue) {
+                            statusValue.innerText = `Active | Expires on ${formattedDate}`;
+                        }
+                    }
+                }
+            } else {
+                // Hide badge and info
+                document.getElementById('settingsProBadge').style.display = 'none';
+                document.getElementById('settingsPlanInfo').style.display = 'none';
+                
+                const statusValue = document.getElementById('settingsStatusValue');
+                if (statusValue) {
+                    statusValue.innerText = 'Inactive';
+                    statusValue.style.color = 'var(--text-secondary)';
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

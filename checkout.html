@@ -696,8 +696,10 @@
                     expiry.setDate(now.getDate() + days);
 
                     localStorage.setItem("premium", "true");
+                    localStorage.setItem("plan", JSON.parse(planRaw).name || "Pro Plan");
                     localStorage.setItem("subscriptionStartDate", now.toISOString());
                     localStorage.setItem("subscriptionExpiryDate", expiry.toISOString());
+                    localStorage.setItem("premiumExpiryDate", expiry.toISOString());
                     localStorage.setItem("selectedPlanPrice", price);
 
                     // Show success screen with details
@@ -751,8 +753,10 @@
                         expiry.setDate(now.getDate() + days);
 
                         localStorage.setItem("premium", "true");
+                        localStorage.setItem("plan", (planRaw ? JSON.parse(planRaw).name : "Pro Plan"));
                         localStorage.setItem("subscriptionStartDate", now.toISOString());
                         localStorage.setItem("subscriptionExpiryDate", expiry.toISOString());
+                        localStorage.setItem("premiumExpiryDate", expiry.toISOString());
                         localStorage.setItem("selectedPlanPrice", price);
 
                         // Show success screen with details

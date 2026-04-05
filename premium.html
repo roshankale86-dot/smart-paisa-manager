@@ -434,6 +434,18 @@
             </div>
         </div>
 
+        <!-- Current Plan Info Box (for active users) -->
+        <div id="premiumCurrentState" style="display: none; margin: -10px 20px 24px 20px; background-color: var(--gold-light); border: 1px solid var(--gold-main); border-radius: var(--radius-md); padding: 12px 16px; display: flex; align-items: center; gap: 12px;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--gold-main); color: white; display: flex; justify-content: center; align-items: center; font-size: 14px;"><i class="fa-solid fa-crown"></i></div>
+            <div style="flex: 1;">
+                <div style="font-size: 13px; font-weight: 700; color: #854d0e;">PRO Member</div>
+                <div style="font-size: 11px; color: #a16207; font-weight: 500;">
+                    <span id="premiumActivePlan">--</span> | Valid till <span id="premiumActiveExpiry">--</span>
+                </div>
+            </div>
+            <div style="font-size: 10px; font-weight: 700; color: var(--gold-dark); text-transform: uppercase;">Current</div>
+        </div>
+
         <!-- Plans Selection -->
         <h3 class="plans-title">Choose your plan</h3>
         <div class="plans-container">
@@ -502,6 +514,27 @@
 
     <!-- Interface Logic -->
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const isPremium = localStorage.getItem('premium') === 'true';
+            if (isPremium) {
+                const planName = localStorage.getItem('plan') || 'Pro Plan';
+                const expiryDateKey = localStorage.getItem('premiumExpiryDate') || localStorage.getItem('subscriptionExpiryDate');
+                
+                if (planName || expiryDateKey) {
+                    document.getElementById('premiumCurrentState').style.display = 'flex';
+                    if (planName) document.getElementById('premiumActivePlan').innerText = planName;
+                    
+                    if (expiryDateKey) {
+                        const date = new Date(expiryDateKey);
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const year = date.getFullYear();
+                        document.getElementById('premiumActiveExpiry').innerText = `${day}/${month}/${year}`;
+                    }
+                }
+            }
+        });
+
         let activePlan = { name: "6 Months Subscription", price: "249", billed: "Billed ₹249 every 6 mo." };
 
         function selectPlan(selectedCard) {
