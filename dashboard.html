@@ -580,7 +580,7 @@
         <header class="header">
             <div class="greeting">
                 <p data-i18n="welcome">Welcome back,</p>
-                <h1><span data-i18n="hello">Hello, User</span> 👋 <span id="dashProBadge"
+                <h1><span data-i18n="hello">Hello, User</span> 👋 <span id="dashProBadge" class="pro-badge"
                         style="display:none; background:linear-gradient(135deg, #fde047 0%, #eab308 50%); color:#0f172a; padding:2px 8px; font-size:13px; border-radius:6px; font-weight:800; vertical-align:middle; margin-left:6px; box-shadow: 0 4px 10px rgba(234,179,8,0.3);">PRO</span>
                 </h1>
             </div>
@@ -604,11 +604,9 @@
                         <div class="balance-amount" id="dbTotalBalance">₹0.00</div>
                     </div>
                     <div id="dashExpiryBox"
-                        style="display: none; text-align: right; background: rgba(255,255,255,0.15); padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
-                        <div
-                            style="font-size: 10px; opacity: 0.8; font-weight: 600; text-transform: uppercase; margin-bottom: 2px;">
-                            PRO Expires</div>
-                        <div id="dashExpiryDate" style="font-size: 12px; font-weight: 700;">--/--/--</div>
+                        style="display: none; text-align: right; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div id="dashExpiryDate" style="font-size: 11px; font-weight: 500; opacity: 0.9;">Premium valid
+                            till: --/--/----</div>
                     </div>
                 </div>
                 <div class="balance-stats">
@@ -851,13 +849,14 @@
 
         function loadDashboard() {
             // Subscription Expiry Check
-            const expiryDateStr = localStorage.getItem('subscriptionExpiryDate');
-            if (expiryDateStr) {
-                const expiryDate = new Date(expiryDateStr);
+            const expiryDateKey = localStorage.getItem('premiumExpiryDate') || localStorage.getItem('subscriptionExpiryDate');
+            if (expiryDateKey) {
+                const expiryDate = new Date(expiryDateKey);
                 if (new Date() > expiryDate) {
                     // Subscription Expired
                     localStorage.removeItem('premium');
                     localStorage.removeItem('isPremium');
+                    localStorage.removeItem('premiumExpiryDate');
                     localStorage.removeItem('subscriptionExpiryDate');
                     alert("Your premium subscription has expired. Please renew to continue using PRO features.");
                 }
@@ -872,10 +871,13 @@
                 if (badge) badge.style.display = 'inline-block';
 
                 // Display Expiry Date
-                if (expiryDateStr) {
-                    const expiryDate = new Date(expiryDateStr);
+                if (expiryDateKey) {
+                    const expiryDate = new Date(expiryDateKey);
+                    const day = String(expiryDate.getDate()).padStart(2, '0');
+                    const month = String(expiryDate.getMonth() + 1).padStart(2, '0');
+                    const year = expiryDate.getFullYear();
                     document.getElementById('dashExpiryBox').style.display = 'block';
-                    document.getElementById('dashExpiryDate').innerText = expiryDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+                    document.getElementById('dashExpiryDate').innerText = `Premium valid till: ${day}/${month}/${year}`;
                 }
             } else {
                 // Ensure Pro badge is hidden and banner shown for non-premium
@@ -883,6 +885,8 @@
                 if (banner) banner.style.display = 'flex';
                 let badge = document.getElementById('dashProBadge');
                 if (badge) badge.style.display = 'none';
+                let expiryBox = document.getElementById('dashExpiryBox');
+                if (expiryBox) expiryBox.style.display = 'none';
             }
 
             let txs = JSON.parse(localStorage.getItem('transactions') || '[]');
