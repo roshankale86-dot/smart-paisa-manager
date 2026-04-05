@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Paisa Manager - Reports</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --brand-green: #10b981;
+            --brand-blue: #0ea5e9;
+            --brand-red: #ef4444;
+            --brand-gradient: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.08);
+            --shadow-brand: 0 10px 20px -5px rgba(16, 185, 129, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow-x: hidden;
+            padding-bottom: 90px;
+            /* Space for bottom nav */
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background-color: var(--surface-color);
+            padding: 24px 20px 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .export-btn {
+            color: var(--brand-blue);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* Month Selector */
+        .month-selector {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            margin-top: 8px;
+        }
+
+        .nav-arrow {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .current-month {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 20px 20px 20px;
+        }
+
+        .summary-card {
+            background-color: var(--surface-color);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .summary-card.full-width {
+            grid-column: span 2;
+            background: var(--brand-gradient);
+            color: white;
+            box-shadow: var(--shadow-brand);
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .full-width .card-title {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .card-amount {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .full-width .card-amount {
+            font-size: 32px;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .amount-green {
+            color: var(--brand-green);
+        }
+
+        .amount-red {
+            color: var(--brand-red);
+        }
+
+        /* Section Cards */
+        .section-card {
+            background-color: var(--surface-color);
+            border-radius: var(--radius-md);
+            margin: 0 20px 20px 20px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Bar Chart Styles */
+        .bar-chart-wrapper {
+            height: 180px;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #f1f5f9;
+            position: relative;
+        }
+
+        /* Horizontal grid lines purely using CSS */
+        .chart-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .grid-line {
+            border-top: 1px dashed #e2e8f0;
+            width: 100%;
+        }
+
+        .bar-group {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .bar {
+            width: 22px;
+            border-radius: 4px 4px 0 0;
+            transition: height 1s ease-in-out;
+        }
+
+        .bar.income {
+            background-color: var(--brand-green);
+        }
+
+        .bar.expense {
+            background-color: var(--brand-red);
+        }
+
+        .month-label {
+            position: absolute;
+            bottom: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Legend for Bar Chart */
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .legend-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Donut Chart Styles */
+        .donut-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0 30px 0;
+        }
+
+        .donut-chart {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: conic-gradient(var(--brand-red) 0% 42%,
+                    var(--brand-blue) 42% 67%,
+                    #f59e0b 67% 85%,
+                    #8b5cf6 85% 100%);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .donut-inner {
+            width: 110px;
+            height: 110px;
+            background-color: var(--surface-color);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .donut-inner p {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .donut-inner h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Categories List below Donut */
+        .cat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cat-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cat-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+        }
+
+        .c-food {
+            background-color: var(--brand-red);
+        }
+
+        .c-trans {
+            background-color: var(--brand-blue);
+        }
+
+        .c-util {
+            background-color: #f59e0b;
+        }
+
+        .c-other {
+            background-color: #8b5cf6;
+        }
+
+        .cat-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .cat-info p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .cat-right {
+            text-align: right;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 414px;
+            background-color: var(--surface-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 20px 24px 20px;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.03);
+            border-top-left-radius: var(--radius-lg);
+            border-top-right-radius: var(--radius-lg);
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--brand-blue);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .nav-item span {
+            font-size: 11px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <h1 class="page-title">Reports</h1>
+            <a href="#" class="export-btn"><i class="fa-solid fa-download"></i> PDF</a>
+        </div>
+
+        <!-- Month Navigation -->
+        <div class="month-selector">
+            <a href="#" class="nav-arrow"><i class="fa-solid fa-chevron-left"></i></a>
+            <div class="current-month">
+                <i class="fa-regular fa-calendar"></i> March 2026
+            </div>
+            <a href="#" class="nav-arrow"><i class="fa-solid fa-chevron-right"></i></a>
+        </div>
+
+        <!-- Summary Grid -->
+        <div class="summary-grid">
+            <div class="summary-card full-width">
+                <span class="card-title">Net Savings</span>
+                <span class="card-amount" id="repSavings">₹0</span>
+            </div>
+            <div class="summary-card">
+                <span class="card-title">Income</span>
+                <span class="card-amount amount-green" id="repIncome">₹0</span>
+            </div>
+            <div class="summary-card">
+                <span class="card-title">Expense</span>
+                <span class="card-amount amount-red" id="repExpense">₹0</span>
+            </div>
+        </div>
+
+        <!-- Bar Chart: Income vs Expense -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3 class="section-title">Income vs Expense</h3>
+            </div>
+
+            <div class="bar-chart-wrapper">
+                <!-- Decorative grid lines -->
+                <div class="chart-grid">
+                    <div class="grid-line"></div>
+                    <div class="grid-line"></div>
+                    <div class="grid-line"></div>
+                    <div class="grid-line"></div>
+                </div>
+
+                <div class="bar-group">
+                    <!-- Heights represent percentages -->
+                    <div class="bar income" style="height: 60%;"></div>
+                    <div class="bar expense" style="height: 35%;"></div>
+                    <span class="month-label">Jan</span>
+                </div>
+
+                <div class="bar-group">
+                    <div class="bar income" style="height: 70%;"></div>
+                    <div class="bar expense" style="height: 40%;"></div>
+                    <span class="month-label">Feb</span>
+                </div>
+
+                <div class="bar-group">
+                    <div class="bar income" id="barIncDyn" style="height: 0%;"></div>
+                    <div class="bar expense" id="barExpDyn" style="height: 0%;"></div>
+                    <span class="month-label">Now</span>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="chart-legend">
+                <div class="legend-chip">
+                    <span class="legend-dot" style="background-color: var(--brand-green);"></span> Income
+                </div>
+                <div class="legend-chip">
+                    <span class="legend-dot" style="background-color: var(--brand-red);"></span> Expense
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie Chart: Category Breakdown -->
+        <div class="section-card">
+            <div class="section-header" style="margin-bottom: 10px;">
+                <h3 class="section-title">Expense Breakdown</h3>
+            </div>
+
+            <!-- CSS Donut Chart -->
+            <div class="donut-container">
+                <div class="donut-chart" id="donutChart">
+                    <div class="donut-inner">
+                        <p>Total Expense</p>
+                        <h3 id="donutTotal">₹0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories List -->
+            <div class="cat-list" id="catList">
+                <!-- Dynamically populated categories go here -->
+            </div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="reports.html" class="nav-item active">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Reports</span>
+            </a>
+            <a href="wallets.html" class="nav-item">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Wallets</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        window.onload = () => {
+            loadReports();
+        };
+
+        function loadReports() {
+            let txs = JSON.parse(localStorage.getItem('transactions') || '[]');
+
+            let totInc = 0;
+            let totExp = 0;
+            let catExpenses = {};
+
+            txs.forEach(tx => {
+                if (tx.type === 'income') {
+                    totInc += tx.amount;
+                } else {
+                    totExp += tx.amount;
+                    if (!catExpenses[tx.category]) catExpenses[tx.category] = 0;
+                    catExpenses[tx.category] += tx.amount;
+                }
+            });
+
+            document.getElementById('repSavings').innerText = '₹' + (totInc - totExp).toLocaleString();
+            document.getElementById('repIncome').innerText = '₹' + totInc.toLocaleString();
+            document.getElementById('repExpense').innerText = '₹' + totExp.toLocaleString();
+            document.getElementById('donutTotal').innerText = '₹' + totExp.toLocaleString();
+
+            let catListHtml = '';
+            let gradientStops = [];
+            let currentPct = 0;
+            const colors = ['#ef4444', '#0ea5e9', '#f59e0b', '#8b5cf6', '#10b981', '#ec4899', '#f97316', '#64748b'];
+
+            if (totExp > 0) {
+                let sortedCats = Object.keys(catExpenses).sort((a, b) => catExpenses[b] - catExpenses[a]);
+                sortedCats.forEach((cat, index) => {
+                    let amt = catExpenses[cat];
+                    let pct = (amt / totExp) * 100;
+                    let color = colors[index % colors.length];
+
+                    catListHtml += `
+                    <div class="cat-item">
+                        <div class="cat-left">
+                            <div class="cat-color" style="background-color: ${color}; border-radius: 4px; width: 12px; height: 12px;"></div>
+                            <div class="cat-info">
+                                <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${cat}</h4>
+                                <p style="font-size: 12px; color: #64748b;">${Math.round(pct)}%</p>
+                            </div>
+                        </div>
+                        <div class="cat-right" style="font-weight: 600;">₹${amt.toLocaleString()}</div>
+                    </div>`;
+
+                    gradientStops.push(`${color} ${currentPct}% ${currentPct + pct}%`);
+                    currentPct += pct;
+                });
+                document.getElementById('donutChart').style.background = `conic-gradient(${gradientStops.join(', ')})`;
+            } else {
+                catListHtml = '<p style="text-align:center;color:#64748b;margin:10px;font-size:14px;">No expenses to chart.</p>';
+                document.getElementById('donutChart').style.background = '#e2e8f0';
+            }
+
+            document.getElementById('catList').innerHTML = catListHtml;
+
+            let maxTotal = Math.max(totInc, totExp, 1);
+            let incPct = (totInc / maxTotal) * 100;
+            let expPct = (totExp / maxTotal) * 100;
+            document.getElementById('barIncDyn').style.height = incPct + '%';
+            document.getElementById('barExpDyn').style.height = expPct + '%';
+        }
+    </script>
+</body>
+
+</html>

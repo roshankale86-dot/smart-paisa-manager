@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Paisa Manager - Secure Checkout</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --brand-green: #10b981;
+            --brand-blue: #0ea5e9;
+            --brand-red: #ef4444;
+            --gold-main: #eab308;
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --secure-header-bg: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* View Controller */
+        .view {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        /* ----- CHECKOUT STATE ----- */
+        .secure-topbar {
+            background-color: var(--secure-header-bg);
+            color: #94a3b8;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .secure-topbar i {
+            color: var(--brand-green);
+        }
+
+        .checkout-header {
+            background-color: var(--secure-header-bg);
+            color: white;
+            padding: 0 20px 30px 20px;
+            border-bottom-left-radius: var(--radius-lg);
+            border-bottom-right-radius: var(--radius-lg);
+        }
+
+        .checkout-header-flex {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .back-icon {
+            color: white;
+            font-size: 20px;
+            text-decoration: none;
+        }
+
+        .order-summary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-details h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: white;
+        }
+
+        .order-details p {
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        .order-price {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .payment-methods {
+            padding: 24px 20px;
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .method-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .method-card {
+            background-color: var(--surface-color);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .method-card.selected {
+            border-color: var(--brand-blue);
+            background-color: #f0f9ff;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1);
+        }
+
+        .method-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .method-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+        }
+
+        /* Colors for different payment methods */
+        .icon-upi {
+            background-color: #fef08a;
+            color: #854d0e;
+        }
+
+        .icon-card {
+            background-color: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .icon-net {
+            background-color: #f3e8ff;
+            color: #7e22ce;
+        }
+
+        .icon-wallet {
+            background-color: #ffedd5;
+            color: #c2410c;
+        }
+
+        .method-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .method-info p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .radio-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #cbd5e1;
+            position: relative;
+        }
+
+        .method-card.selected .radio-btn {
+            border-color: var(--brand-blue);
+            background-color: var(--brand-blue);
+        }
+
+        .method-card.selected .radio-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: white;
+        }
+
+        .bottom-action {
+            background-color: var(--surface-color);
+            padding: 20px;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .pay-btn {
+            width: 100%;
+            background-color: var(--brand-blue);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s;
+        }
+
+        .pay-btn:active {
+            transform: scale(0.98);
+        }
+
+        .trust-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            opacity: 0.6;
+        }
+
+        /* Developer Options for testing states easily */
+        .dev-links {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 10px;
+            color: #94a3b8;
+        }
+
+        .dev-links a {
+            color: var(--brand-blue);
+            text-decoration: none;
+            margin: 0 8px;
+            cursor: pointer;
+        }
+
+        /* ----- PROCESSING STATE ----- */
+        .processing-view {
+            justify-content: center;
+            align-items: center;
+            background-color: var(--surface-color);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f1f5f9;
+            border-top: 4px solid var(--brand-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 24px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .processing-view h2 {
+            font-size: 20px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .processing-view p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .bank-logos {
+            margin-top: 30px;
+            font-size: 24px;
+            color: #cbd5e1;
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        /* ----- MESSAGE STATES (Success / Fail) ----- */
+        .message-view {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            background-color: var(--surface-color);
+        }
+
+        .status-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            margin: 0 auto 24px auto;
+        }
+
+        .success-circle {
+            background-color: #d1fae5;
+            color: var(--brand-green);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .fail-circle {
+            background-color: #fee2e2;
+            color: var(--brand-red);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .message-view h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .message-view p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .receipt-card {
+            background-color: var(--bg-color);
+            border: 1px dashed #cbd5e1;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            width: 100%;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .receipt-row:last-child {
+            margin-bottom: 0;
+            padding-top: 10px;
+            border-top: 1px dashed #cbd5e1;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .receipt-label {
+            color: var(--text-secondary);
+        }
+
+        .receipt-val {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background-color: var(--brand-green);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-retry {
+            width: 100%;
+            background-color: var(--text-primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- 1. CHECKOUT VIEW -->
+        <div id="view-checkout" class="view active">
+            <!-- Secure Header -->
+            <div class="secure-topbar">
+                <i class="fa-solid fa-shield-check"></i> 100% Secure Payment
+            </div>
+
+            <div class="checkout-header">
+                <div class="checkout-header-flex">
+                    <a href="premium.html" class="back-icon"><i class="fa-solid fa-arrow-left"></i></a>
+                    <h2 style="font-size: 18px;">Checkout</h2>
+                </div>
+
+                <div class="order-summary">
+                    <div class="order-details">
+                        <h3 style="margin-bottom:2px;">Smart Paisa PRO</h3>
+                        <p id="co-name" style="color:white;font-weight:600;margin-bottom:2px;">6 Months Subscription</p>
+                        <p id="co-billed" style="font-size:11px;">Billed ₹249 every 6 mo.</p>
+                    </div>
+                    <div class="order-price" id="co-price">₹249</div>
+                </div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="payment-methods">
+                <h3 class="section-title">Select Payment Method</h3>
+
+                <div class="method-list">
+
+                    <div class="method-card selected" onclick="selectMethod(this)">
+                        <div class="method-left">
+                            <div class="method-icon" style="background-color: #fef08a; color: #854d0e;"><i
+                                    class="fa-solid fa-qrcode"></i></div>
+                            <div class="method-info">
+                                <h4>QR Code Scan</h4>
+                                <p>Scan QR with any UPI app</p>
+                            </div>
+                        </div>
+                        <div class="radio-btn"></div>
+                    </div>
+
+                    <div class="method-card" onclick="selectMethod(this)">
+                        <div class="method-left">
+                            <div class="method-icon icon-upi"><i class="fa-brands fa-google-pay"></i></div>
+                            <div class="method-info">
+                                <h4>Google Pay / UPI</h4>
+                                <p>Pay via any UPI app</p>
+                            </div>
+                        </div>
+                        <div class="radio-btn"></div>
+                    </div>
+
+                    <div class="method-card" onclick="selectMethod(this)">
+                        <div class="method-left">
+                            <div class="method-icon icon-card"><i class="fa-regular fa-credit-card"></i></div>
+                            <div class="method-info">
+                                <h4>Credit / Debit Card</h4>
+                                <p>Visa, MasterCard, RuPay</p>
+                            </div>
+                        </div>
+                        <div class="radio-btn"></div>
+                    </div>
+
+                    <div class="method-card" onclick="selectMethod(this)">
+                        <div class="method-left">
+                            <div class="method-icon icon-net"><i class="fa-solid fa-building-columns"></i></div>
+                            <div class="method-info">
+                                <h4>Net Banking</h4>
+                                <p>All major Indian banks</p>
+                            </div>
+                        </div>
+                        <div class="radio-btn"></div>
+                    </div>
+
+                    <div class="method-card" onclick="selectMethod(this)">
+                        <div class="method-left">
+                            <div class="method-icon icon-wallet"><i class="fa-solid fa-wallet"></i></div>
+                            <div class="method-info">
+                                <h4>Wallets</h4>
+                                <p>Paytm, PhonePe, MobiKwik</p>
+                            </div>
+                        </div>
+                        <div class="radio-btn"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Bottom Action -->
+            <div class="bottom-action">
+                <button class="pay-btn" onclick="processPayment()">
+                    <i class="fa-solid fa-lock"></i> <span id="co-btn-txt">Pay ₹249 Securely</span>
+                </button>
+
+                <div class="trust-icons">
+                    <i class="fa-brands fa-cc-visa"></i>
+                    <i class="fa-brands fa-cc-mastercard"></i>
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                </div>
+
+                <!-- Hidden developer tools to help you test the mockup -->
+                <div class="dev-links">
+                    Dev Test:
+                    <a onclick="processPayment(true)">Force Success</a> |
+                    <a onclick="processPayment(false)">Force Fail</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. PROCESSING VIEW -->
+        <div id="view-processing" class="view processing-view">
+            <div class="spinner"></div>
+            <h2>Processing Payment...</h2>
+            <p>Please do not close this window or press back.</p>
+            <div class="bank-logos">
+                <i class="fa-solid fa-building-columns"></i>
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+        </div>
+
+        <!-- 3. SUCCESS VIEW -->
+        <div id="view-success" class="view message-view">
+            <div class="status-circle success-circle">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h1>Payment Successful!</h1>
+            <p>Welcome to the PRO family. Your subscription details are below:</p>
+
+            <div class="receipt-card">
+                <div class="receipt-row">
+                    <span class="receipt-label">Status</span>
+                    <span class="receipt-val" style="color:var(--brand-green)">Active</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Plan Name</span>
+                    <span class="receipt-val" id="success-plan-name">Active Plan</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Expiry Date</span>
+                    <span class="receipt-val" id="success-expiry-date">--/--/--</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Payment Mode</span>
+                    <span class="receipt-val" id="success-method">UPI / Online</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Amount Paid</span>
+                    <span class="receipt-val" id="success-amount">₹0.00</span>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
+        </div>
+
+        <!-- 4. FAILED VIEW -->
+        <div id="view-failed" class="view message-view">
+            <div class="status-circle fail-circle">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+            <h1>Payment Failed</h1>
+            <p>We couldn't process your payment. Your bank declined the transaction due to insufficient funds or a
+                network error.</p>
+
+            <div class="receipt-card" style="border-color: #fecaca; background-color: #fef2f2;">
+                <div class="receipt-row">
+                    <span class="receipt-label" style="color: #ef4444;">Error Code</span>
+                    <span class="receipt-val" style="color: #ef4444;">BANK_DECLINED_02</span>
+                </div>
+            </div>
+
+            <button class="btn-retry" onclick="retryPayment()">Try Note Payment Method</button>
+            <a href="premium.html"
+                style="display: block; margin-top: 20px; color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500;">Cancel
+                Transaction</a>
+        </div>
+
+    </div>
+
+    <!-- Razorpay SDK Placeholder -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <!-- Interface Logic -->
+    <script>
+        // --- RAZORPAY API INTEGRATION ---
+        const RAZORPAY_KEY = "rzp_test_SZsG2a7GYijlw8";
+
+        window.onload = () => {
+            let planRaw = localStorage.getItem("selectedPlan");
+            if (planRaw) {
+                let plan = JSON.parse(planRaw);
+                document.getElementById('co-name').innerText = plan.name;
+                document.getElementById('co-billed').innerText = plan.billed;
+                document.getElementById('co-price').innerText = '₹' + plan.price;
+                document.getElementById('co-btn-txt').innerText = 'Pay ₹' + plan.price + ' via Razorpay';
+            }
+        };
+
+        function selectMethod(element) {
+            document.querySelectorAll('.method-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        function processPayment(willSucceed) {
+            let planRaw = localStorage.getItem("selectedPlan");
+            let price = 249; // default fallback
+            if (planRaw) price = parseInt(JSON.parse(planRaw).price);
+
+            // Razorpay standard configuration object
+            var options = {
+                "key": RAZORPAY_KEY,
+                "amount": price * 100, // Razorpay takes amount in paise (multiply by 100)
+                "currency": "INR",
+                "name": "Smart Paisa Manager",
+                "description": "PRO Subscription Upgrade",
+                "image": "https://example.com/your_logo.png",
+                "handler": function (response) {
+                    // Determine duration based on plan price
+                    let days = 30; // default monthly
+                    if (price == 249) days = 180;
+                    else if (price == 399) days = 365;
+
+                    const now = new Date();
+                    const expiry = new Date();
+                    expiry.setDate(now.getDate() + days);
+
+                    localStorage.setItem("premium", "true");
+                    localStorage.setItem("subscriptionStartDate", now.toISOString());
+                    localStorage.setItem("subscriptionExpiryDate", expiry.toISOString());
+                    localStorage.setItem("selectedPlanPrice", price);
+
+                    // Show success screen with details
+                    document.getElementById('success-plan-name').innerText = JSON.parse(planRaw).name || "Pro Plan";
+                    document.getElementById('success-amount').innerText = '₹' + price;
+                    document.getElementById('success-expiry-date').innerText = expiry.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                    // Capture method from selected card in UI
+                    const selectedMethodText = document.querySelector('.method-card.selected h4').innerText;
+                    document.getElementById('success-method').innerText = selectedMethodText;
+
+                    showView('view-success');
+                },
+                "config": {
+                    "display": {
+                        "blocks": {
+                            "upi": {
+                                "name": "Pay via UPI",
+                                "instruments": [
+                                    { "method": "upi" },
+                                    { "method": "qr" }
+                                ]
+                            }
+                        },
+                        "sequence": ["block.upi", "block.card", "block.netbanking"],
+                        "preferences": { "show_default_blocks": true }
+                    }
+                },
+                "prefill": {
+                    "name": "User Account",
+                    "email": "user@example.com",
+                    "contact": "9999999999"
+                },
+                "theme": {
+                    "color": "#10b981" // Brand green
+                }
+            };
+
+            // Demo Mockup logic (triggers via dev tools)
+            if (willSucceed !== undefined) {
+                showView('view-processing');
+                setTimeout(() => {
+                    if (willSucceed) {
+                        // Determine duration based on plan price
+                        let days = 30; // default monthly
+                        if (price == 249) days = 180;
+                        else if (price == 399) days = 365;
+
+                        const now = new Date();
+                        const expiry = new Date();
+                        expiry.setDate(now.getDate() + days);
+
+                        localStorage.setItem("premium", "true");
+                        localStorage.setItem("subscriptionStartDate", now.toISOString());
+                        localStorage.setItem("subscriptionExpiryDate", expiry.toISOString());
+                        localStorage.setItem("selectedPlanPrice", price);
+
+                        // Show success screen with details
+                        document.getElementById('success-plan-name').innerText = (planRaw ? JSON.parse(planRaw).name : "Pro Plan");
+                        document.getElementById('success-amount').innerText = '₹' + price;
+                        document.getElementById('success-expiry-date').innerText = expiry.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                        // Capture method from selected card in UI
+                        const selectedMethodText = document.querySelector('.method-card.selected h4').innerText;
+                        document.getElementById('success-method').innerText = selectedMethodText;
+
+                        showView('view-success');
+                    } else {
+                        alert("Payment Failed, Try Again");
+                        showView('view-failed');
+                    }
+                }, 1500);
+            } else {
+                // This will execute genuine Razorpay Checkout Modal
+                var rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed', function (response) {
+                    console.error("Payment Failed", response.error.code);
+                    alert("Payment Failed, Try Again");
+                    showView('view-failed');
+                });
+                rzp1.open();
+            }
+        }
+
+        function retryPayment() {
+            // Go back to checkout
+            showView('view-checkout');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Paisa Manager - Add Income</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --brand-green: #10b981;
+            --brand-blue: #0ea5e9;
+            --brand-red: #ef4444;
+            --income-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 32px;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            min-height: 100vh;
+            background-color: var(--surface-color);
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Green Section */
+        .top-section {
+            background: var(--income-gradient);
+            color: white;
+            padding: 24px 20px 40px 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            color: white;
+            font-size: 20px;
+            text-decoration: none;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .amount-container {
+            text-align: center;
+        }
+
+        .amount-label {
+            font-size: 14px;
+            opacity: 0.8;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .amount-input-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .amount-symbol {
+            font-size: 32px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .amount-input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 48px;
+            font-weight: 700;
+            width: 100%;
+            max-width: 200px;
+            outline: none;
+            text-align: center;
+        }
+
+        .amount-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Form Sheet Content */
+        .form-sheet {
+            background-color: var(--surface-color);
+            border-top-left-radius: var(--radius-lg);
+            border-top-right-radius: var(--radius-lg);
+            margin-top: -30px;
+            padding: 0 20px 100px 20px;
+            flex: 1;
+        }
+
+        .voice-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translateY(-28px);
+            margin-bottom: -10px;
+        }
+
+        .voice-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--surface-color);
+            color: var(--brand-green);
+            font-size: 24px;
+            border: none;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .voice-btn:active {
+            transform: scale(0.95);
+        }
+
+        .voice-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        /* Chips */
+        .chip-group {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            padding-bottom: 4px;
+        }
+
+        .chip-group::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chip {
+            padding: 10px 18px;
+            background-color: var(--bg-color);
+            border: 1.5px solid transparent;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chip i {
+            margin-right: 6px;
+            font-size: 16px;
+            vertical-align: middle;
+        }
+
+        .chip.active {
+            background-color: #d1fae5;
+            color: var(--brand-green);
+            border-color: var(--brand-green);
+        }
+
+        /* Category Grid */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px 10px;
+        }
+
+        .cat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .cat-icon-wrapper {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .cat-item.active .cat-icon-wrapper {
+            background-color: var(--brand-green);
+            color: white;
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .cat-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .cat-item.active .cat-label {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Note Input */
+        .note-input-container {
+            position: relative;
+        }
+
+        .note-input {
+            width: 100%;
+            background-color: var(--bg-color);
+            border: 1.5px solid transparent;
+            border-radius: var(--radius-md);
+            padding: 16px 16px 16px 44px;
+            font-size: 15px;
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .note-input:focus {
+            border-color: var(--brand-green);
+            background-color: white;
+        }
+
+        .note-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 18px;
+        }
+
+        /* Fixed Bottom Action */
+        .bottom-action {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 414px;
+            background-color: var(--surface-color);
+            padding: 16px 20px 24px 20px;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .save-btn {
+            width: 100%;
+            background-color: var(--brand-green);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .save-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Top Green Section -->
+        <div class="top-section">
+            <header class="header">
+                <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+                <h2 class="page-title">Add Income</h2>
+                <div style="width: 32px;"></div>
+            </header>
+            <div class="amount-container">
+                <div class="amount-label">How much?</div>
+                <div class="amount-input-wrapper">
+                    <span class="amount-symbol">₹</span>
+                    <input type="number" class="amount-input" id="amount_input" placeholder="0" autofocus>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-sheet">
+            <div class="voice-btn-wrapper">
+                <button class="voice-btn" onclick="window.location.href='voice_entry.html'"><i
+                        class="fa-solid fa-microphone"></i></button>
+                <span class="voice-hint">Tap to Speak</span>
+            </div>
+
+            <!-- Categories -->
+            <div class="form-group" style="margin-top: 10px;">
+                <label class="form-label">Category</label>
+                <div class="category-grid">
+                    <div class="cat-item active">
+                        <div class="cat-icon-wrapper"><i class="fa-solid fa-briefcase"></i></div>
+                        <span class="cat-label">Salary</span>
+                    </div>
+                    <div class="cat-item">
+                        <div class="cat-icon-wrapper"><i class="fa-solid fa-store"></i></div>
+                        <span class="cat-label">Business</span>
+                    </div>
+                    <div class="cat-item">
+                        <div class="cat-icon-wrapper"><i class="fa-solid fa-laptop-code"></i></div>
+                        <span class="cat-label">Freelance</span>
+                    </div>
+                    <div class="cat-item">
+                        <div class="cat-icon-wrapper"><i class="fa-solid fa-chart-line"></i></div>
+                        <span class="cat-label">Investment</span>
+                    </div>
+                    <div class="cat-item">
+                        <div class="cat-icon-wrapper"><i class="fa-solid fa-gift"></i></div>
+                        <span class="cat-label">Gift</span>
+                    </div>
+                    <div class="cat-item">
+                        <div class="cat-icon-wrapper"><i class="fa-solid fa-house"></i></div>
+                        <span class="cat-label">Rental</span>
+                    </div>
+                    <div class="cat-item">
+                        <div class="cat-icon-wrapper"><i class="fa-solid fa-money-bill-transfer"></i></div>
+                        <span class="cat-label">Refund</span>
+                    </div>
+                    <div class="cat-item">
+                        <div class="cat-icon-wrapper"><i class="fa-solid fa-circle-plus"></i></div>
+                        <span class="cat-label">Other</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Date</label>
+                <div class="chip-group">
+                    <div class="chip active">Today</div>
+                    <div class="chip">Yesterday</div>
+                    <div class="chip"><i class="fa-regular fa-calendar"></i> Custom Date</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Received In</label>
+                <div class="chip-group">
+                    <div class="chip"><i class="fa-solid fa-building-columns"></i> Bank Account</div>
+                    <div class="chip active"><i class="fa-solid fa-wallet"></i> Cash / Wallet</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Note (Optional)</label>
+                <div class="note-input-container">
+                    <i class="fa-solid fa-pen note-icon"></i>
+                    <input type="text" class="note-input" id="note_input" placeholder="What is this income for?">
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-action">
+            <button class="save-btn" onclick="saveIncome()">Save Income</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedCategory = 'Salary';
+        let selectedIconClasses = 'fa-solid fa-briefcase';
+
+        document.querySelectorAll('.cat-item').forEach(item => {
+            item.addEventListener('click', function () {
+                document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                selectedCategory = this.querySelector('.cat-label').innerText;
+                selectedIconClasses = this.querySelector('.cat-icon-wrapper i').className;
+            });
+        });
+
+        function saveIncome() {
+            const amount = parseFloat(document.getElementById('amount_input').value);
+            const note = document.getElementById('note_input').value || selectedCategory;
+            if (!amount || amount <= 0) return alert('Enter a valid amount!');
+
+            const tx = {
+                id: Date.now(),
+                type: 'income',
+                amount: amount,
+                category: selectedCategory,
+                icon: selectedIconClasses,
+                note: note,
+                date: new Date().toISOString()
+            };
+
+            let txs = JSON.parse(localStorage.getItem('transactions') || '[]');
+            txs.push(tx);
+            localStorage.setItem('transactions', JSON.stringify(txs));
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+
+</html>

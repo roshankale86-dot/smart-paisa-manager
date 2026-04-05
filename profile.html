@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Paisa Manager - Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --brand-green: #10b981;
+            --brand-blue: #0ea5e9;
+            --brand-red: #ef4444;
+            --gold-main: #eab308;
+            --gold-light: #fef08a;
+            --radius-md: 16px;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            background-color: var(--surface-color);
+            padding: 24px 20px 16px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-btn {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 20px;
+            margin-right: 16px;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .profile-hero {
+            background-color: var(--surface-color);
+            text-align: center;
+            padding: 24px 20px 40px 20px;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+
+        .avatar-lg {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #e0f2fe;
+            margin: 0 auto 16px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            color: var(--brand-blue);
+            position: relative;
+            box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
+        }
+
+        .edit-avatar {
+            position: absolute;
+            bottom: 0;
+            right: -4px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--surface-color);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .user-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .user-phone {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .pro-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--gold-light);
+            color: #854d0e;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .content {
+            padding: 0 20px 40px 20px;
+        }
+
+        .info-card {
+            background: var(--surface-color);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .info-val {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .action-btn {
+            width: 100%;
+            background: var(--surface-color);
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: background 0.2s;
+        }
+
+        .action-btn:active {
+            background: #f8fafc;
+        }
+
+        .action-btn i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .btn-logout {
+            color: var(--brand-red);
+            margin-top: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <div class="top-bar">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <h1 class="page-title">My Profile</h1>
+        </div>
+
+        <div class="profile-hero">
+            <div class="avatar-lg">
+                <i class="fa-regular fa-user"></i>
+                <div class="edit-avatar"><i class="fa-solid fa-pen"></i></div>
+            </div>
+            <h2 class="user-name">Rahul Sharma</h2>
+            <p class="user-phone">+91 98765 43210</p>
+            <div class="pro-badge"><i class="fa-solid fa-crown"></i> PRO Active</div>
+        </div>
+
+        <div class="content">
+            <div class="info-card">
+                <div class="info-row">
+                    <span class="info-label">Name</span>
+                    <span class="info-val">Rahul Sharma</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Mobile Number</span>
+                    <span class="info-val">+91 98765 43210</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Language</span>
+                    <span class="info-val">English</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Subscription</span>
+                    <span class="info-val" style="color:var(--gold-main);">PRO Active</span>
+                </div>
+            </div>
+
+            <button class="action-btn" onclick="window.location.href='settings.html'">
+                <i class="fa-solid fa-user-pen" style="color: var(--brand-blue);"></i> Edit Profile Details
+            </button>
+            <button class="action-btn" onclick="window.location.href='premium.html'">
+                <i class="fa-solid fa-star" style="color: var(--gold-main);"></i> Manage Subscription
+            </button>
+            <button class="action-btn">
+                <i class="fa-regular fa-circle-question" style="color: var(--brand-green);"></i> Help and Support
+            </button>
+
+            <button class="action-btn btn-logout" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </div>
+</body>
+
+</html>

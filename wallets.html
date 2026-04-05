@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Paisa Manager - Wallets</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --brand-green: #10b981;
+            --brand-blue: #0ea5e9;
+            --brand-red: #ef4444;
+            --brand-gradient: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 90px;
+        }
+
+        .top-bar {
+            background-color: var(--surface-color);
+            padding: 24px 20px 16px 20px;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .content {
+            padding: 0 20px;
+        }
+
+        /* Wallet Total Card */
+        .wallet-card {
+            background: var(--surface-color);
+            padding: 24px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            margin-top: 20px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wallet-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 6px;
+            height: 100%;
+            background: var(--brand-blue);
+        }
+
+        .wallet-total {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        /* Wallet List */
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .w-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .w-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .w-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .w-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+        }
+
+        .w-icon-bank {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .w-icon-upi {
+            background: #fef08a;
+            color: #ca8a04;
+        }
+
+        .w-icon-cash {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .w-item h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .w-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .w-balance {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background: var(--brand-blue);
+            color: white;
+            border: none;
+            padding: 16px;
+            width: 100%;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        /* Recent Transfers */
+        .transfer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .tx-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tx-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tx-icon-w {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 414px;
+            background-color: var(--surface-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 20px 24px 20px;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.03);
+            border-top-left-radius: var(--radius-lg);
+            border-top-right-radius: var(--radius-lg);
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: var(--brand-blue);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .nav-item span {
+            font-size: 11px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <div class="top-bar">
+            <h1 class="page-title">My Wallets</h1>
+        </div>
+
+        <div class="content">
+            <div class="wallet-card">
+                <p style="color: var(--text-secondary); font-size: 14px; font-weight: 500;">Total Wallet Balance</p>
+                <div class="wallet-total">₹45,230.50</div>
+            </div>
+
+            <h3 class="section-title">Accounts & Wallets</h3>
+            <div class="w-list">
+                <div class="w-item">
+                    <div class="w-left">
+                        <div class="w-icon w-icon-bank"><i class="fa-solid fa-building-columns"></i></div>
+                        <div>
+                            <h4>HDFC Bank Account</h4>
+                            <p>**** 4589</p>
+                        </div>
+                    </div>
+                    <div class="w-balance">₹35,000.50</div>
+                </div>
+
+                <div class="w-item">
+                    <div class="w-left">
+                        <div class="w-icon w-icon-upi"><i class="fa-brands fa-google-pay"></i></div>
+                        <div>
+                            <h4>UPI Wallet</h4>
+                            <p>Linked to 9876543210</p>
+                        </div>
+                    </div>
+                    <div class="w-balance">₹8,500.00</div>
+                </div>
+
+                <div class="w-item">
+                    <div class="w-left">
+                        <div class="w-icon w-icon-cash"><i class="fa-solid fa-money-bill-wave"></i></div>
+                        <div>
+                            <h4>Cash Wallet</h4>
+                            <p>In Hand</p>
+                        </div>
+                    </div>
+                    <div class="w-balance">₹1,730.00</div>
+                </div>
+            </div>
+
+            <button class="btn-primary">
+                <i class="fa-solid fa-plus"></i> Add Wallet / Bank
+            </button>
+
+            <h3 class="section-title">Recent Wallet Transfers</h3>
+            <div class="transfer-list">
+                <div class="tx-card">
+                    <div class="tx-left">
+                        <div class="tx-icon-w"><i class="fa-solid fa-right-left"></i></div>
+                        <div>
+                            <h4 style="font-size: 14px; color: var(--text-primary); margin-bottom: 2px;">Bank to UPI
+                            </h4>
+                            <p style="font-size: 12px; color: var(--text-secondary);">Today, 10:00 AM</p>
+                        </div>
+                    </div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-primary);">₹2,000</div>
+                </div>
+                <div class="tx-card">
+                    <div class="tx-left">
+                        <div class="tx-icon-w"><i class="fa-solid fa-arrow-down" style="color:var(--brand-green);"></i>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 14px; color: var(--text-primary); margin-bottom: 2px;">ATM Withdrawal
+                            </h4>
+                            <p style="font-size: 12px; color: var(--text-secondary);">Yesterday, 2:30 PM (Cash Wallet)
+                            </p>
+                        </div>
+                    </div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--brand-green);">+ ₹5,000</div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Reports</span>
+            </a>
+            <a href="wallets.html" class="nav-item active">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Wallets</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </div>
+</body>
+
+</html>

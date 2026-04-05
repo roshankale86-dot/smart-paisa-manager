@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Paisa Manager - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --brand-gradient: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+            --brand-green: #10b981;
+            --brand-blue: #0ea5e9;
+            --brand-red: #ef4444;
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-brand: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            /* Mobile width */
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow-x: hidden;
+            padding-bottom: 80px;
+            /* nav spacing */
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 20px 10px 20px;
+        }
+
+        .greeting h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .greeting p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .top-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .lang-select {
+            padding: 6px 10px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--brand-blue);
+            background-color: white;
+            outline: none;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .profile-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            border: none;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--brand-blue);
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .profile-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Balance Card */
+        .balance-card-wrapper {
+            padding: 16px 20px;
+        }
+
+        .balance-card {
+            background: var(--brand-gradient);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            color: white;
+            box-shadow: var(--shadow-brand);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::after {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .balance-header {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+        }
+
+        .balance-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Action Buttons */
+        .actions-section {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 20px 20px 20px;
+        }
+
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .action-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .action-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--surface-color);
+            border: none;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .action-btn.expense {
+            color: var(--brand-red);
+        }
+
+        .action-btn.income {
+            color: var(--brand-green);
+        }
+
+        .action-btn.voice {
+            background: var(--brand-gradient);
+            color: white;
+            box-shadow: var(--shadow-brand);
+            transform: scale(1.1);
+        }
+
+        .action-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        /* Premium Banner */
+        .premium-banner {
+            margin: 0 20px 24px 20px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 16px rgba(15, 23, 42, 0.15);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .premium-banner:hover {
+            transform: translateY(-2px);
+        }
+
+        .premium-banner::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(234, 179, 8, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+        }
+
+        .banner-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(234, 179, 8, 0.15);
+            color: #eab308;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);
+        }
+
+        .banner-text {
+            flex: 1;
+            z-index: 1;
+        }
+
+        .banner-text h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #f8fafc;
+            margin-bottom: 2px;
+        }
+
+        .banner-text p {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .banner-btn {
+            background: linear-gradient(135deg, #fde047 0%, #eab308 100%);
+            color: #451a03;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sections Structure */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 12px;
+            margin-top: 8px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .see-all {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--brand-blue);
+            text-decoration: none;
+        }
+
+        /* Budget Section */
+        .budget-section {
+            padding: 10px 20px;
+            margin-bottom: 16px;
+        }
+
+        .budget-card {
+            background-color: var(--surface-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .budget-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .budget-spent {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .budget-total {
+            color: var(--text-secondary);
+        }
+
+        .progress-track {
+            height: 8px;
+            background-color: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--brand-gradient);
+            border-radius: 4px;
+            width: 79%;
+        }
+
+        /* Category Cards */
+        .categories-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding: 10px 20px 20px 20px;
+            scrollbar-width: none;
+        }
+
+        .categories-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-card {
+            min-width: 110px;
+            background-color: var(--surface-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .cat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .cat-food {
+            background-color: #fee2e2;
+            color: #ef4444;
+        }
+
+        .cat-transport {
+            background-color: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .cat-utilities {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+
+        .cat-shopping {
+            background-color: #f3e8ff;
+            color: #9333ea;
+        }
+
+        .cat-name {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .cat-amount {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Recent Transactions */
+        .transactions-section {
+            padding: 0 20px 30px 20px;
+        }
+
+        .transaction-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .tx-card {
+            background-color: var(--surface-color);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tx-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tx-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: #f1f5f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .tx-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .tx-info p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .tx-right {
+            text-align: right;
+        }
+
+        .tx-amount {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .tx-amount.negative {
+            color: var(--text-primary);
+        }
+
+        .tx-amount.positive {
+            color: var(--brand-green);
+        }
+
+        .tx-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 414px;
+            background-color: var(--surface-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 20px 24px 20px;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.03);
+            border-top-left-radius: var(--radius-lg);
+            border-top-right-radius: var(--radius-lg);
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--brand-blue);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .nav-item span {
+            font-size: 11px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="greeting">
+                <p data-i18n="welcome">Welcome back,</p>
+                <h1><span data-i18n="hello">Hello, User</span> 👋 <span id="dashProBadge"
+                        style="display:none; background:linear-gradient(135deg, #fde047 0%, #eab308 50%); color:#0f172a; padding:2px 8px; font-size:13px; border-radius:6px; font-weight:800; vertical-align:middle; margin-left:6px; box-shadow: 0 4px 10px rgba(234,179,8,0.3);">PRO</span>
+                </h1>
+            </div>
+            <div class="top-controls">
+                <select class="lang-select" onchange="setLanguage(this.value)">
+                    <option value="en">A English</option>
+                    <option value="hi">अ हिंदी</option>
+                    <option value="mr">अ मराठी</option>
+                </select>
+                <button class="profile-btn" onclick="window.location.href='profile.html'"><i
+                        class="fa-regular fa-user"></i></button>
+            </div>
+        </header>
+
+        <!-- Main Balance Card -->
+        <div class="balance-card-wrapper">
+            <div class="balance-card">
+                <div class="balance-header" data-i18n="total_balance">Total Balance</div>
+                <div class="balance-amount" id="dbTotalBalance">₹0.00</div>
+                <div class="balance-stats">
+                    <div class="stat-item">
+                        <div class="stat-label" data-i18n="income">Income</div>
+                        <div class="stat-value"><i class="fa-solid fa-arrow-down"
+                                style="font-size: 10px; margin-right: 4px;"></i><span id="dbTotalIncome">₹0</span></div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-label" data-i18n="expense">Expense</div>
+                        <div class="stat-value"><i class="fa-solid fa-arrow-up"
+                                style="font-size: 10px; margin-right: 4px;"></i><span id="dbTotalExpense">₹0</span>
+                        </div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-label" data-i18n="savings">Savings</div>
+                        <div class="stat-value" id="dbTotalSavings">₹0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions-section">
+            <div class="action-item" onclick="window.location.href='add_expense.html'">
+                <button class="action-btn expense"><i class="fa-solid fa-minus"></i></button>
+                <span class="action-label" data-i18n="add_expense">Add Expense</span>
+            </div>
+            <div class="action-item" onclick="window.location.href='voice_entry.html'">
+                <button class="action-btn voice"><i class="fa-solid fa-microphone"></i></button>
+                <span class="action-label" data-i18n="voice_entry" style="margin-top:2px;">Voice Entry</span>
+            </div>
+            <div class="action-item" onclick="window.location.href='add_income.html'">
+                <button class="action-btn income"><i class="fa-solid fa-plus"></i></button>
+                <span class="action-label" data-i18n="add_income">Add Income</span>
+            </div>
+        </div>
+
+        <!-- Premium Banner -->
+        <div class="premium-banner" id="dashPremiumBanner" onclick="window.location.href='premium.html'">
+            <div class="banner-icon"><i class="fa-solid fa-crown"></i></div>
+            <div class="banner-text">
+                <h4 data-i18n="unlock_premium">Unlock Premium Features</h4>
+                <p data-i18n="premium_desc">Unlimited Voice + Smart Reports</p>
+            </div>
+            <button class="banner-btn" data-i18n="upgrade_now">Upgrade Now</button>
+        </div>
+
+        <!-- Budget Section -->
+        <div class="budget-section">
+            <div class="section-header" style="padding: 0 0 12px 0;">
+                <h3 class="section-title" data-i18n="monthly_budget">Monthly Budget</h3>
+                <a href="#" class="see-all" data-i18n="edit">Edit</a>
+            </div>
+            <div class="budget-card">
+                <div class="budget-info">
+                    <span class="budget-spent">₹39,769 <span data-i18n="spent">spent</span></span>
+                    <span class="budget-total"><span data-i18n="of">of</span> ₹50,000</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Wise Expense -->
+        <div class="section-header">
+            <h3 class="section-title" data-i18n="categories">Categories</h3>
+            <a href="#" class="see-all" data-i18n="see_all">See All</a>
+        </div>
+        <div class="categories-scroll">
+            <div class="category-card">
+                <div class="cat-icon cat-food"><i class="fa-solid fa-utensils"></i></div>
+                <div class="cat-name" data-i18n="food">Food</div>
+                <div class="cat-amount">₹12,450</div>
+            </div>
+            <div class="category-card">
+                <div class="cat-icon cat-transport"><i class="fa-solid fa-car"></i></div>
+                <div class="cat-name" data-i18n="transport">Transport</div>
+                <div class="cat-amount">₹5,200</div>
+            </div>
+            <div class="category-card">
+                <div class="cat-icon cat-utilities"><i class="fa-solid fa-bolt"></i></div>
+                <div class="cat-name" data-i18n="utilities">Utilities</div>
+                <div class="cat-amount">₹4,800</div>
+            </div>
+            <div class="category-card">
+                <div class="cat-icon cat-shopping"><i class="fa-solid fa-bag-shopping"></i></div>
+                <div class="cat-name" data-i18n="shopping">Shopping</div>
+                <div class="cat-amount">₹8,100</div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="transactions-section">
+            <div class="section-header" style="padding: 0;">
+                <h3 class="section-title" data-i18n="recent_tx">Recent Transactions</h3>
+                <a href="#" class="see-all" data-i18n="see_all">See All</a>
+            </div>
+            <div class="transaction-list" id="transactionList">
+                <!-- Transactions will be injected here via JS -->
+            </div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item active">
+                <i class="fa-solid fa-house"></i>
+                <span data-i18n="home">Home</span>
+            </a>
+            <a href="reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span data-i18n="analytics">Reports</span>
+            </a>
+            <a href="wallets.html" class="nav-item">
+                <i class="fa-solid fa-wallet"></i>
+                <span data-i18n="wallets">Wallets</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <i class="fa-solid fa-gear"></i>
+                <span data-i18n="settings">Settings</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Multi-Language Translator Script -->
+    <script>
+        const translations = {
+            "en": {
+                "welcome": "Welcome back,",
+                "hello": "Hello, User",
+                "total_balance": "Total Balance",
+                "income": "Income",
+                "expense": "Expense",
+                "savings": "Savings",
+                "add_expense": "Add Expense",
+                "voice_entry": "Voice Entry",
+                "add_income": "Add Income",
+                "monthly_budget": "Monthly Budget",
+                "edit": "Edit",
+                "spent": "spent",
+                "of": "of",
+                "categories": "Categories",
+                "see_all": "See All",
+                "food": "Food",
+                "transport": "Transport",
+                "utilities": "Utilities",
+                "shopping": "Shopping",
+                "recent_tx": "Recent Transactions",
+                "home": "Home",
+                "analytics": "Reports",
+                "wallets": "Wallets",
+                "settings": "Settings",
+                "unlock_premium": "Unlock Premium Features",
+                "premium_desc": "Unlimited Voice + Smart Reports",
+                "upgrade_now": "Upgrade Now"
+            },
+            "hi": {
+                "welcome": "वापसी पर स्वागत है,",
+                "hello": "नमस्ते, User",
+                "total_balance": "कुल बैलेंस",
+                "income": "आमदनी",
+                "expense": "खर्च",
+                "savings": "बचत",
+                "add_expense": "खर्च जोड़ें",
+                "voice_entry": "बोलकर लिखें",
+                "add_income": "आमदनी जोड़ें",
+                "monthly_budget": "महीने का बजट",
+                "edit": "बदलें",
+                "spent": "खर्च हुआ",
+                "of": "कुल",
+                "categories": "श्रेणियाँ",
+                "see_all": "सभी देखें",
+                "food": "खाना",
+                "transport": "सफर",
+                "utilities": "बिल",
+                "shopping": "खरीदारी",
+                "recent_tx": "हाल के लेन-देन",
+                "home": "होम",
+                "analytics": "रिपोर्ट",
+                "wallets": "वॉलेट",
+                "settings": "सेटिंग्स",
+                "unlock_premium": "प्रीमियम सुविधाएँ खोलें",
+                "premium_desc": "अनंत वॉयस + स्मार्ट रिपोर्ट",
+                "upgrade_now": "अभी अपग्रेड करें"
+            },
+            "mr": {
+                "welcome": "पुन्हा स्वागत आहे,",
+                "hello": "नमस्कार, User",
+                "total_balance": "एकूण रक्कम",
+                "income": "उत्पन्न",
+                "expense": "खर्च",
+                "savings": "बचत",
+                "add_expense": "खर्च लिहा",
+                "voice_entry": "बोलून लिहा",
+                "add_income": "उत्पन्न लिहा",
+                "monthly_budget": "महिन्याचे बजेट",
+                "edit": "बदल करा",
+                "spent": "खर्च झाले",
+                "of": "पैकी",
+                "categories": "विभाग",
+                "see_all": "सर्व पहा",
+                "food": "जेवण",
+                "transport": "प्रवास",
+                "utilities": "बिले",
+                "shopping": "खरेदी",
+                "recent_tx": "नवीन व्यवहार",
+                "home": "होम",
+                "analytics": "अहवाल",
+                "wallets": "वॉलेट",
+                "settings": "सेटिंग्ज",
+                "unlock_premium": "प्रीमियम सुविधा सुरु करा",
+                "premium_desc": "अनलिमिटेड व्हॉइस + स्मार्ट अहवाल",
+                "upgrade_now": "तुम्ही आता अपग्रेड करा"
+            }
+        };
+
+        function setLanguage(lang) {
+            const elements = document.querySelectorAll("[data-i18n]");
+            elements.forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerText = translations[lang][key];
+                }
+            });
+
+            // Save preference to localStorage so it persists across sessions
+            localStorage.setItem("userLanguage", lang);
+        }
+
+        // Check if user has a previously selected language
+        window.onload = () => {
+            const savedLang = localStorage.getItem("userLanguage") || "en";
+            document.querySelector(".lang-select").value = savedLang;
+            setLanguage(savedLang);
+            loadDashboard(); // Load transactions
+        };
+
+        function loadDashboard() {
+            // Subscription Expiry Check
+            const expiryDateStr = localStorage.getItem('subscriptionExpiryDate');
+            if (expiryDateStr) {
+                const expiryDate = new Date(expiryDateStr);
+                if (new Date() > expiryDate) {
+                    // Subscription Expired
+                    localStorage.removeItem('premium');
+                    localStorage.removeItem('isPremium');
+                    localStorage.removeItem('subscriptionExpiryDate');
+                    alert("Your premium subscription has expired. Please renew to continue using PRO features.");
+                }
+            }
+
+            // Check for PRO status
+            let isPremium = localStorage.getItem('isPremium') === 'true' || localStorage.getItem('premium') === 'true';
+            if (isPremium) {
+                let banner = document.getElementById('dashPremiumBanner');
+                if (banner) banner.style.display = 'none';
+                let badge = document.getElementById('dashProBadge');
+                if (badge) badge.style.display = 'inline-block';
+            } else {
+                // Ensure Pro badge is hidden and banner shown for non-premium
+                let banner = document.getElementById('dashPremiumBanner');
+                if (banner) banner.style.display = 'flex';
+                let badge = document.getElementById('dashProBadge');
+                if (badge) badge.style.display = 'none';
+            }
+
+            let txs = JSON.parse(localStorage.getItem('transactions') || '[]');
+            let totInc = 0;
+            let totExp = 0;
+            let txListHtml = '';
+
+            // Loop array backwards for newest first
+            txs.slice().reverse().forEach(tx => {
+                let isInc = (tx.type === 'income');
+                if (isInc) totInc += tx.amount;
+                else totExp += tx.amount;
+
+                let iconColor = isInc ? '#10b981' : (tx.type === 'expense' ? '#ef4444' : '#9333ea');
+                let iconBg = isInc ? '#d1fae5' : (tx.type === 'expense' ? '#fee2e2' : '#f3e8ff');
+
+                txListHtml += `
+                <div class="tx-card">
+                    <div class="tx-left">
+                        <div class="tx-icon" style="color: ${iconColor}; background: ${iconBg};">
+                            <i class="${tx.icon}"></i>
+                        </div>
+                        <div class="tx-info">
+                            <h4>${tx.category}</h4>
+                            <p>${tx.note}</p>
+                        </div>
+                    </div>
+                    <div class="tx-right">
+                        <div class="tx-amount ${isInc ? 'positive' : 'negative'}">${isInc ? '+' : '-'}₹${tx.amount.toLocaleString()}</div>
+                        <div class="tx-time">Just Now</div>
+                    </div>
+                </div>`;
+            });
+
+            if (txs.length === 0) {
+                txListHtml = '<p style="text-align:center;color:#64748b;margin:20px;font-size:14px;">No transactions yet. Add some below!</p>';
+            }
+
+            let bTotEl = document.getElementById('dbTotalBalance');
+            let dtIncEl = document.getElementById('dbTotalIncome');
+            let dtExpEl = document.getElementById('dbTotalExpense');
+            let dtSavEl = document.getElementById('dbTotalSavings');
+            let txListEl = document.getElementById('transactionList');
+
+            if (txListEl) txListEl.innerHTML = txListHtml;
+            let bal = totInc - totExp;
+            if (bTotEl) bTotEl.innerText = '₹' + bal.toLocaleString();
+            if (dtIncEl) dtIncEl.innerText = '₹' + totInc.toLocaleString();
+            if (dtExpEl) dtExpEl.innerText = '₹' + totExp.toLocaleString();
+            if (dtSavEl) dtSavEl.innerText = '₹' + bal.toLocaleString();
+        }
+    </script>
+</body>
+
+</html>

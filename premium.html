@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Paisa Manager - Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #fafaf9;
+            /* Slightly warmer white for gold theme */
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --brand-green: #10b981;
+
+            /* Premium Theme Colors */
+            --gold-light: #fef08a;
+            --gold-main: #eab308;
+            --gold-dark: #a16207;
+            --premium-gradient: linear-gradient(135deg, #fde047 0%, #eab308 50%, #ca8a04 100%);
+            --dark-card: #0f172a;
+            --dark-card-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-gold: 0 10px 25px -5px rgba(234, 179, 8, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            text-decoration: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .pro-badge {
+            background: var(--premium-gradient);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            box-shadow: var(--shadow-gold);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 10px 24px 30px 24px;
+            text-align: center;
+        }
+
+        .hero-icon {
+            font-size: 64px;
+            background: var(--premium-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* Comparison Table inside Dark Card */
+        .comparison-wrapper {
+            margin: 0 20px 30px 20px;
+            background: var(--dark-card-gradient);
+            border-radius: var(--radius-lg);
+            padding: 24px 20px;
+            color: white;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative glare effect */
+        .comparison-wrapper::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0) 100%);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        .comp-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comp-header .feat-title {
+            width: 50%;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .comp-header .free-title {
+            width: 25%;
+            text-align: center;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .comp-header .pro-title {
+            width: 25%;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gold-main);
+        }
+
+        .comp-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+        }
+
+        .comp-row:last-child {
+            border-bottom: none;
+        }
+
+        .feat-name {
+            width: 50%;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .free-val {
+            width: 25%;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .pro-val {
+            width: 25%;
+            text-align: center;
+            color: var(--gold-main);
+            font-size: 16px;
+            text-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
+        }
+
+        /* Plans Section */
+        .plans-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .plans-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 0 20px;
+        }
+
+        .plan-card {
+            background-color: var(--surface-color);
+            border: 2px solid transparent;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* Normal Plan Details */
+        .plan-duration {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .plan-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .plan-price {
+            text-align: right;
+        }
+
+        .price-big {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .price-small {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .radio-circle {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            margin-right: 16px;
+        }
+
+        .plan-left {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Highlighted Plan (6 Months) */
+        .plan-card.highlight {
+            border-color: var(--gold-main);
+            background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%);
+            box-shadow: 0 8px 16px rgba(234, 179, 8, 0.15);
+        }
+
+        .plan-card.highlight .radio-circle {
+            border-color: var(--gold-main);
+            background-color: var(--gold-main);
+            position: relative;
+        }
+
+        .plan-card.highlight .radio-circle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: white;
+        }
+
+        .badge-popular {
+            position: absolute;
+            top: -12px;
+            left: 24px;
+            background: var(--premium-gradient);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Best Value Plan (1 Year) */
+        .badge-value {
+            position: absolute;
+            top: -12px;
+            left: 24px;
+            background: var(--brand-green);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        /* Bottom Action Area */
+        .bottom-action {
+            margin-top: 30px;
+            padding: 0 20px;
+        }
+
+        .upgrade-btn {
+            width: 100%;
+            background: var(--premium-gradient);
+            color: #451a03;
+            /* Very dark rich brown */
+            font-size: 18px;
+            font-weight: 800;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            cursor: pointer;
+            box-shadow: var(--shadow-gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s;
+        }
+
+        .upgrade-btn:active {
+            transform: scale(0.98);
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="pro-badge">PRO</div>
+            <div style="width: 40px;"></div> <!-- Spacer block -->
+        </header>
+
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="hero-icon"><i class="fa-solid fa-crown"></i></div>
+            <h1>Upgrade to Premium</h1>
+            <p>Take full control of your finances with powerful advanced features.</p>
+        </div>
+
+        <!-- Features Comparison -->
+        <div class="comparison-wrapper">
+            <div class="comp-header">
+                <div class="feat-title">Features</div>
+                <div class="free-title">Free</div>
+                <div class="pro-title">PRO</div>
+            </div>
+
+            <div class="comp-row">
+                <div class="feat-name">Quick Voice Entry</div>
+                <div class="free-val">5 / day</div>
+                <div class="pro-val"><i class="fa-solid fa-infinity" style="font-size: 14px;"></i></div>
+            </div>
+            <div class="comp-row">
+                <div class="feat-name">Family Account</div>
+                <div class="free-val"><i class="fa-solid fa-minus"></i></div>
+                <div class="pro-val"><i class="fa-solid fa-check"></i></div>
+            </div>
+            <div class="comp-row">
+                <div class="feat-name">Advanced Reports</div>
+                <div class="free-val"><i class="fa-solid fa-minus"></i></div>
+                <div class="pro-val"><i class="fa-solid fa-check"></i></div>
+            </div>
+            <div class="comp-row">
+                <div class="feat-name">Farming Mode</div>
+                <div class="free-val"><i class="fa-solid fa-minus"></i></div>
+                <div class="pro-val"><i class="fa-solid fa-check"></i></div>
+            </div>
+            <div class="comp-row">
+                <div class="feat-name">Smart Savings Tips</div>
+                <div class="free-val"><i class="fa-solid fa-minus"></i></div>
+                <div class="pro-val"><i class="fa-solid fa-check"></i></div>
+            </div>
+            <div class="comp-row" style="border:none;">
+                <div class="feat-name">Ad-Free Experience</div>
+                <div class="free-val"><i class="fa-solid fa-minus"></i></div>
+                <div class="pro-val"><i class="fa-solid fa-check"></i></div>
+            </div>
+        </div>
+
+        <!-- Plans Selection -->
+        <h3 class="plans-title">Choose your plan</h3>
+        <div class="plans-container">
+
+            <!-- Plan 1 -->
+            <div class="plan-card" onclick="selectPlan(this)">
+                <div class="plan-left">
+                    <div class="radio-circle"></div>
+                    <div>
+                        <div class="plan-duration">1 Month</div>
+                        <div class="plan-desc">Billed monthly</div>
+                    </div>
+                </div>
+                <div class="plan-price">
+                    <div class="price-big">₹49</div>
+                    <div class="price-small">/ month</div>
+                </div>
+            </div>
+
+            <!-- Plan 2 (Highlighted) -->
+            <div class="plan-card highlight" onclick="selectPlan(this)">
+                <div class="badge-popular"><i class="fa-solid fa-star" style="margin-right:4px;"></i> Most Popular</div>
+                <div class="plan-left">
+                    <div class="radio-circle"></div>
+                    <div>
+                        <div class="plan-duration">6 Months</div>
+                        <div class="plan-desc">Billed ₹249 every 6 mo.</div>
+                    </div>
+                </div>
+                <div class="plan-price">
+                    <div class="price-big">₹249</div>
+                    <div class="price-small">₹41.5 / mo</div>
+                </div>
+            </div>
+
+            <!-- Plan 3 -->
+            <div class="plan-card" onclick="selectPlan(this)">
+                <div class="badge-value">Best Value</div>
+                <div class="plan-left">
+                    <div class="radio-circle"></div>
+                    <div>
+                        <div class="plan-duration">1 Year</div>
+                        <div class="plan-desc">Save 32% instantly</div>
+                    </div>
+                </div>
+                <div class="plan-price">
+                    <div class="price-big">₹399</div>
+                    <div class="price-small">₹33.2 / mo</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Checkout Action -->
+        <div class="bottom-action">
+            <button class="upgrade-btn" onclick="initiateCheckout()">
+                Subscribe Now <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <div class="trust-badges">
+                <div class="trust-badge"><i class="fa-solid fa-shield-halved text-green-500"></i> Secure Payment</div>
+                <div class="trust-badge"><i class="fa-solid fa-rotate-left"></i> Cancel Anytime</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Interface Logic -->
+    <script>
+        let activePlan = { name: "6 Months Subscription", price: "249", billed: "Billed ₹249 every 6 mo." };
+
+        function selectPlan(selectedCard) {
+            // Remove highlight from all cards
+            document.querySelectorAll('.plan-card').forEach(card => {
+                card.classList.remove('highlight');
+            });
+            // Add highlight to selected
+            selectedCard.classList.add('highlight');
+
+            // Extract plan details
+            activePlan.name = selectedCard.querySelector('.plan-duration').innerText + " Subscription";
+            activePlan.price = selectedCard.querySelector('.price-big').innerText.replace('₹', '');
+            activePlan.billed = selectedCard.querySelector('.plan-desc').innerText;
+        }
+
+        function initiateCheckout() {
+            localStorage.setItem("selectedPlan", JSON.stringify(activePlan));
+            window.location.href = "checkout.html";
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+/* Smart Paisa Manager - Core Design System */
+
+:root {
+    /* === 1. Colors === */
+    /* Base Backgrounds */
+    --bg-color: #f8fafc;
+    /* App background / Off-white */
+    --surface-color: #ffffff;
+    /* Pure white cards */
+
+    /* Typography */
+    --text-primary: #1e293b;
+    /* High contrast text for readability */
+    --text-secondary: #64748b;
+    /* Low contrast UI text */
+
+    /* Brand Colors (Green + Blue Theme) */
+    --brand-green: #10b981;
+    /* Trust, Income, Success */
+    --brand-blue: #0ea5e9;
+    /* Tech, Neutral primary */
+    --brand-red: #ef4444;
+    /* Expenses, Alerts */
+    --gold-main: #eab308;
+    /* Premium elements */
+
+    /* Gradients */
+    --brand-gradient: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+    --expense-gradient: linear-gradient(135deg, #f43f5e 0%, #ef4444 100%);
+    --premium-gradient: linear-gradient(135deg, #fde047 0%, #eab308 50%, #ca8a04 100%);
+
+    /* === 2. Typography === */
+    --font-main: 'Inter', sans-serif;
+
+    /* === 3. Borders & Rounding === */
+    --radius-sm: 8px;
+    /* Small chips, tags */
+    --radius-md: 16px;
+    /* Standard cards, inputs */
+    --radius-lg: 24px;
+    /* Large hero cards, bottom nav */
+    --radius-xl: 32px;
+    /* Very soft rounded sheets */
+
+    /* === 4. Shadows (Soft & Friendly) === */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.08);
+    --shadow-brand: 0 10px 20px -5px rgba(16, 185, 129, 0.3);
+    /* Colored shadow */
+    --shadow-gold: 0 10px 25px -5px rgba(234, 179, 8, 0.4);
+}
+
+/* === Global Resets === */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-main);
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #e2e8f0;
+    /* Darker grey container to frame the mobile view */
+    display: flex;
+    justify-content: center;
+}
+
+/* === Layout Engine (Mobile First) === */
+.app-container {
+    width: 100%;
+    max-width: 414px;
+    /* iPhone Max limit */
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* === Component Classes === */
+.card {
+    background-color: var(--surface-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+}
+
+.btn-primary {
+    background: var(--brand-gradient);
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    cursor: pointer;
+    box-shadow: var(--shadow-brand);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.2s;
+    width: 100%;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}

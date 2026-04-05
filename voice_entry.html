@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Paisa Manager - Voice Entry</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --brand-green: #10b981;
+            --brand-blue: #0ea5e9;
+            --brand-red: #ef4444;
+            --brand-gradient: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+            --radius-md: 16px;
+            --radius-lg: 32px;
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            min-height: 100vh;
+            background-color: var(--surface-color);
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar */
+        .close-header {
+            padding: 24px 24px 10px 24px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .close-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f1f5f9;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        
+        .close-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Main Content */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 24px;
+        }
+
+        /* Instructions */
+        .instruction {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.3;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            margin-top: 10px;
+        }
+
+        /* Live Preview Card */
+        .preview-card {
+            width: 100%;
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 24px 20px;
+            text-align: center;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            margin-bottom: auto;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+
+        /* Active listening state for the preview card */
+        .preview-card.active {
+            border-color: var(--brand-blue);
+            background-color: #f0f9ff;
+        }
+
+        .preview-text {
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-style: italic;
+        }
+
+        .empty-text {
+            color: #94a3b8;
+        }
+
+        /* Visual Tags for extracted data (Mockup) */
+        .extracted-tags {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .tag {
+            background-color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .tag-red { color: var(--brand-red); border-color: #fecaca; background: #fef2f2; }
+        .tag-green { color: var(--brand-green); border-color: #bbf7d0; background: #f0fdf4; }
+
+        /* Mic Section & Animation */
+        .mic-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .mic-wrapper {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pulse-ring-1, .pulse-ring-2 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background-color: var(--brand-blue);
+            z-index: 1;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Continuous Ripple Animations */
+        .pulse-ring-1 {
+            animation: ripple 2s infinite cubic-bezier(0.1, 0.5, 0.5, 1);
+        }
+        
+        .pulse-ring-2 {
+            animation: ripple 2s infinite cubic-bezier(0.1, 0.5, 0.5, 1);
+            animation-delay: 1s;
+        }
+
+        .mic-btn {
+            width: 86px;
+            height: 86px;
+            border-radius: 50%;
+            background: var(--brand-gradient);
+            color: white;
+            font-size: 38px;
+            border: none;
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(14, 165, 233, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .mic-btn:active {
+            transform: scale(0.92);
+        }
+
+        .mic-status {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--brand-blue);
+            margin-top: 16px;
+            letter-spacing: 0.5px;
+            animation: pulse-text 1.5s infinite;
+        }
+
+        /* Bottom Actions */
+        .action-container {
+            width: 100%;
+            display: flex;
+            gap: 16px;
+            padding: 0 0 20px 0;
+        }
+
+        .btn {
+            flex: 1;
+            height: 64px; /* Extralarge for easy tap */
+            border-radius: var(--radius-md);
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.2s;
+        }
+        
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-edit {
+            background-color: #f1f5f9;
+            color: var(--text-primary);
+            flex: 0.7;
+        }
+
+        .btn-confirm {
+            background-color: var(--brand-green);
+            color: white;
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+            flex: 1.3;
+        }
+
+        /* Keyframes */
+        @keyframes ripple {
+            0% { width: 80px; height: 80px; opacity: 0.5; }
+            100% { width: 260px; height: 260px; opacity: 0; }
+        }
+
+        @keyframes pulse-text {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Add a simple script to toggle states for demo purposes */
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Close Button -->
+        <div class="close-header">
+            <a href="dashboard.html" class="close-btn"><i class="fa-solid fa-xmark"></i></a>
+        </div>
+
+        <div class="content-area">
+            
+            <h1 class="instruction">
+                Tap and speak your<br>
+                <span style="color: var(--brand-red);">expense</span> or <span style="color: var(--brand-green);">income</span>
+            </h1>
+
+            <!-- Listening Preview Card -->
+            <div class="preview-card" id="previewCard">
+                <div class="preview-text empty-text" id="previewText">
+                    Tap the microphone and speak aloud...
+                </div>
+                
+                <!-- These tags appear after words are processed -->
+                <div class="extracted-tags" id="extractedTags" style="display:none;">
+                    <span class="tag tag-red" id="tagType"><i class="fa-solid fa-minus"></i> Expense</span>
+                    <span class="tag" id="tagAmount" style="font-weight: 700;">₹0</span>
+                    <span class="tag" id="tagCategory"><i class="fa-solid fa-ellipsis"></i> Other</span>
+                </div>
+            </div>
+
+            <!-- Microphone Area -->
+            <div class="mic-section">
+                <div class="mic-wrapper">
+                    <!-- Ripple effect elements -->
+                    <div class="pulse-ring-1"></div>
+                    <div class="pulse-ring-2"></div>
+                    
+                    <button class="mic-btn" onclick="toggleListening()">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                </div>
+                <div class="mic-status" id="mic-status-text">Listening Now...</div>
+            </div>
+
+            <!-- Confirmation Actions -->
+            <div class="action-container">
+                <button class="btn btn-edit" onclick="editTransaction()">
+                    <i class="fa-solid fa-pen"></i> Edit
+                </button>
+                <button class="btn btn-confirm" onclick="confirmTransaction()">
+                    <i class="fa-solid fa-check"></i> Confirm
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let isListening = false;
+        let finalTransaction = null;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            // Default to English, but SpeechRecognition often auto-detects or handles mixed well
+            recognition.lang = localStorage.getItem("userLanguage") === 'hi' ? 'hi-IN' : (localStorage.getItem("userLanguage") === 'mr' ? 'mr-IN' : 'en-IN');
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            
+            recognition.onstart = function() {
+                isListening = true;
+                updateVisuals();
+                document.getElementById('previewText').innerText = "Listening...";
+                document.getElementById('previewText').classList.remove('empty-text');
+                document.getElementById('extractedTags').style.display = 'none';
+            };
+            
+            recognition.onresult = function(event) {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                document.getElementById('previewText').innerText = `"${transcript}"`;
+                
+                if (event.results[0].isFinal) {
+                    processSpeech(transcript);
+                }
+            };
+            
+            recognition.onerror = function(event) {
+                document.getElementById('previewText').innerText = "Could not hear you properly. Try again.";
+                isListening = false;
+                updateVisuals();
+            };
+            
+            recognition.onend = function() {
+                isListening = false;
+                updateVisuals();
+            };
+        }
+
+        function processSpeech(text) {
+            text = text.toLowerCase();
+            
+            // 1. Check for Voice Commands (Navigation)
+            if (text.includes('show my expenses') || text.includes('reports') || text.includes('report')) {
+                document.getElementById('previewText').innerText = "Opening your expense reports...";
+                speakText("Here are your expense reports.", () => { window.location.href = 'reports.html'; });
+                return;
+            }
+            if (text.includes('add income')) {
+                document.getElementById('previewText').innerText = "Opening Add Income...";
+                speakText("Opening Add Income.", () => { window.location.href = 'add_income.html'; });
+                return;
+            }
+            if (text.includes('show balance') || text.includes('dashboard') || text.includes('home')) {
+                document.getElementById('previewText').innerText = "Opening your balance...";
+                speakText("Showing your balance on the dashboard.", () => { window.location.href = 'index.html'; });
+                return;
+            }
+
+            // 2. Parse Amount
+            let amountMatches = text.match(/\d+/g);
+            let amount = amountMatches ? parseInt(amountMatches[0]) : 0;
+            
+            let type = 'expense';
+            let iconType = '<i class="fa-solid fa-minus"></i> Expense';
+            let tagClass = 'tag-red';
+            
+            if (text.includes('income') || text.includes('salary') || text.includes('received') || text.includes('milale')) {
+                type = 'income';
+                iconType = '<i class="fa-solid fa-plus"></i> Income';
+                tagClass = 'tag-green';
+            }
+            
+            let category = 'Other';
+            let iconCat = 'fa-ellipsis';
+            
+            if (text.includes('food') || text.includes('zomato') || text.includes('khana') || text.includes('jevan')) { category = 'Food'; iconCat = 'fa-utensils'; }
+            else if (text.includes('petrol') || text.includes('transport') || text.includes('auto') || text.includes('cab')) { category = 'Transport'; iconCat = 'fa-car'; }
+            else if (text.includes('recharge') || text.includes('mobile') || text.includes('phone')) { category = 'Recharge'; iconCat = 'fa-mobile-screen'; }
+            else if (text.includes('medicine') || text.includes('medical') || text.includes('doctor') || text.includes('dava')) { category = 'Medical'; iconCat = 'fa-kit-medical'; }
+            else if (text.includes('shopping') || text.includes('kapde') || text.includes('amazon')) { category = 'Shopping'; iconCat = 'fa-bag-shopping'; }
+            else if (text.includes('farm') || text.includes('shet') || text.includes('kheti')) { category = 'Farming'; iconCat = 'fa-tractor'; }
+            else if (text.includes('salary') || text.includes('pagaar')) { category = 'Salary'; iconCat = 'fa-briefcase'; }
+
+            document.getElementById('tagType').innerHTML = iconType;
+            document.getElementById('tagType').className = `tag ${tagClass}`;
+            document.getElementById('tagAmount').innerHTML = `₹${amount}`;
+            document.getElementById('tagCategory').innerHTML = `<i class="fa-solid ${iconCat}"></i> ${category}`;
+            
+            document.getElementById('extractedTags').style.display = 'flex';
+            
+            finalTransaction = {
+                id: Date.now(),
+                type: type,
+                amount: amount,
+                category: category,
+                icon: `fa-solid ${iconCat}`,
+                note: text,
+                date: new Date().toISOString()
+            };
+
+            // 3. Spoken Feedback
+            if (amount > 0) {
+                let speechFeedback = `You added ${amount} for ${category} ${type}.`;
+                // Add simple translated fallback for Hindi
+                if(localStorage.getItem('userLanguage') === 'hi') {
+                    speechFeedback = `आपने ${category} के लिए ${amount} रुपये जोड़े।`;
+                } else if(localStorage.getItem('userLanguage') === 'mr') {
+                    speechFeedback = `तुम्ही ${category} साठी ${amount} रुपये नोंदवले.`;
+                }
+                speakText(speechFeedback);
+            }
+        }
+
+        // TTS Helper
+        function speakText(msg, callback) {
+            if ('speechSynthesis' in window) {
+                let utterance = new SpeechSynthesisUtterance(msg);
+                let lang = localStorage.getItem("userLanguage");
+                utterance.lang = lang === 'hi' ? 'hi-IN' : (lang === 'mr' ? 'mr-IN' : 'en-IN');
+                if (callback) utterance.onend = callback;
+                window.speechSynthesis.speak(utterance);
+            } else if (callback) {
+                callback();
+            }
+        }
+
+        function confirmTransaction() {
+            if (!finalTransaction || finalTransaction.amount === 0) {
+                alert("Please speak a valid amount before saving.");
+                return;
+            }
+            let txs = JSON.parse(localStorage.getItem('transactions') || '[]');
+            txs.push(finalTransaction);
+            localStorage.setItem('transactions', JSON.stringify(txs));
+            window.location.href = 'dashboard.html';
+        }
+
+        function editTransaction() {
+            if(!finalTransaction) return alert("Nothing to edit yet! Please speak first.");
+            let newAmount = prompt("Edit amount:", finalTransaction.amount);
+            if(newAmount !== null) {
+                finalTransaction.amount = parseInt(newAmount) || 0;
+                document.getElementById('tagAmount').innerHTML = `₹${finalTransaction.amount}`;
+            }
+            let newCat = prompt("Edit category:", finalTransaction.category);
+            if(newCat !== null) {
+                finalTransaction.category = newCat;
+                document.getElementById('tagCategory').innerHTML = `<i class="${finalTransaction.icon}"></i> ${finalTransaction.category}`;
+            }
+        }
+
+        function toggleListening() {
+            if (!recognition) {
+                alert("Speech recognition isn't supported in this browser. Try Chrome/Edge.");
+                return;
+            }
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+
+        function updateVisuals() {
+            const rings = document.querySelectorAll('.pulse-ring-1, .pulse-ring-2');
+            const statusText = document.getElementById('mic-status-text');
+            const previewCard = document.getElementById('previewCard');
+            
+            if (isListening) {
+                rings.forEach(r => r.style.display = 'block');
+                statusText.innerText = 'Listening Now...';
+                statusText.style.color = 'var(--brand-blue)';
+                previewCard.classList.add('active');
+            } else {
+                rings.forEach(r => r.style.display = 'none');
+                statusText.innerText = 'Tap to Speak';
+                statusText.style.color = 'var(--text-secondary)';
+                previewCard.classList.remove('active');
+            }
+        }
+
+        // Initialize state
+        updateVisuals();
+    </script>
+</body>
+</html>
