@@ -424,14 +424,26 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const isPremium = localStorage.getItem('premium') === 'true';
+            let isExpired = false;
+            const expiryDateKey = localStorage.getItem('premiumExpiryDate') || localStorage.getItem('subscriptionExpiryDate');
+            
+            if (expiryDateKey) {
+                const expiryDate = new Date(expiryDateKey);
+                if (new Date() > expiryDate) {
+                    isExpired = true;
+                    // Note: dashboard.html also does this cleanup, but here we update UI state
+                }
+            }
+
+            const isPremium = localStorage.getItem('premium') === 'true' && !isExpired;
+            
             if (isPremium) {
                 // Show badge
                 document.getElementById('settingsProBadge').style.display = 'inline-flex';
+                document.getElementById('settingsProBadge').innerHTML = '<i class="fa-solid fa-crown"></i> PRO Active';
                 
                 // Show plan info
                 const planName = localStorage.getItem('plan') || 'Pro Plan';
-                const expiryDateKey = localStorage.getItem('premiumExpiryDate') || localStorage.getItem('subscriptionExpiryDate');
                 
                 if (planName || expiryDateKey) {
                     document.getElementById('settingsPlanInfo').style.display = 'block';
@@ -454,15 +466,26 @@
                     }
                 }
             } else {
-                // Hide badge and info
-                document.getElementById('settingsProBadge').style.display = 'none';
-                document.getElementById('settingsPlanInfo').style.display = 'none';
-                
+                // Not premium or expired
                 const statusValue = document.getElementById('settingsStatusValue');
-                if (statusValue) {
-                    statusValue.innerText = 'Inactive';
-                    statusValue.style.color = 'var(--text-secondary)';
+                if (isExpired) {
+                    document.getElementById('settingsProBadge').style.display = 'inline-flex';
+                    document.getElementById('settingsProBadge').innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> Subscription Expired';
+                    document.getElementById('settingsProBadge').style.backgroundColor = 'var(--brand-red)';
+                    document.getElementById('settingsProBadge').style.color = 'white';
+                    
+                    if (statusValue) {
+                        statusValue.innerText = 'Renew Premium';
+                        statusValue.style.color = 'var(--gold-main)';
+                    }
+                } else {
+                    document.getElementById('settingsProBadge').style.display = 'none';
+                    if (statusValue) {
+                        statusValue.innerText = 'Inactive';
+                        statusValue.style.color = 'var(--text-secondary)';
+                    }
                 }
+                document.getElementById('settingsPlanInfo').style.display = 'none';
             }
         });
     </script>

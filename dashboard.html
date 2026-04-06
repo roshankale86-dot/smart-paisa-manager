@@ -651,10 +651,10 @@
         <div class="premium-banner" id="dashPremiumBanner" onclick="window.location.href='premium.html'">
             <div class="banner-icon"><i class="fa-solid fa-crown"></i></div>
             <div class="banner-text">
-                <h4 data-i18n="unlock_premium">Unlock Premium Features</h4>
-                <p data-i18n="premium_desc">Unlimited Voice + Smart Reports</p>
+                <h4 id="dashPremiumTitle" data-i18n="unlock_premium">Unlock Premium Features</h4>
+                <p id="dashPremiumDesc" data-i18n="premium_desc">Unlimited Voice + Smart Reports</p>
             </div>
-            <button class="banner-btn" data-i18n="upgrade_now">Upgrade Now</button>
+            <button class="banner-btn" id="dashPremiumBtn" data-i18n="upgrade_now">Upgrade Now</button>
         </div>
 
         <!-- Budget Section -->
@@ -848,12 +848,14 @@
         };
 
         function loadDashboard() {
+            let isExpired = false;
             // Subscription Expiry Check
             const expiryDateKey = localStorage.getItem('premiumExpiryDate') || localStorage.getItem('subscriptionExpiryDate');
             if (expiryDateKey) {
                 const expiryDate = new Date(expiryDateKey);
                 if (new Date() > expiryDate) {
                     // Subscription Expired
+                    isExpired = true;
                     localStorage.removeItem('premium');
                     localStorage.removeItem('isPremium');
                     localStorage.removeItem('premiumExpiryDate');
@@ -871,7 +873,7 @@
                 if (badge) badge.style.display = 'inline-block';
 
                 // Display Expiry Date
-                if (expiryDateKey) {
+                if (expiryDateKey && !isExpired) {
                     const expiryDate = new Date(expiryDateKey);
                     const day = String(expiryDate.getDate()).padStart(2, '0');
                     const month = String(expiryDate.getMonth() + 1).padStart(2, '0');
@@ -882,7 +884,14 @@
             } else {
                 // Ensure Pro badge is hidden and banner shown for non-premium
                 let banner = document.getElementById('dashPremiumBanner');
-                if (banner) banner.style.display = 'flex';
+                if (banner) {
+                    banner.style.display = 'flex';
+                    if (isExpired) {
+                        document.getElementById('dashPremiumTitle').innerText = "Subscription Expired";
+                        document.getElementById('dashPremiumDesc').innerText = "Renew now to keep your PRO benefits!";
+                        document.getElementById('dashPremiumBtn').innerText = "Renew Now";
+                    }
+                }
                 let badge = document.getElementById('dashProBadge');
                 if (badge) badge.style.display = 'none';
                 let expiryBox = document.getElementById('dashExpiryBox');
